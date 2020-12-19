@@ -54,6 +54,11 @@
   var REPO_URL = GITHUB_URL + user + '/' + repo;
   var USER_REPO = user + '/' + repo;
 
+  function setupCounter(data, message) {
+    counter.textContent = data && addCommas(data);
+    counter.setAttribute('aria-label', counter.textContent + ' ' + message + LABEL_SUFFIX);
+  }
+
   window.callback = function(obj) {
     if (obj.data.message === 'Not Found') {
       return;
@@ -62,25 +67,20 @@
     switch (type) {
       case 'watch':
         if (v === '2') {
-          counter.textContent = obj.data.subscribers_count && addCommas(obj.data.subscribers_count);
-          counter.setAttribute('aria-label', counter.textContent + ' watchers' + LABEL_SUFFIX);
+          setupCounter(obj.data.subscribers_count, 'watchers');
         } else {
-          counter.textContent = obj.data.stargazers_count && addCommas(obj.data.stargazers_count);
-          counter.setAttribute('aria-label', counter.textContent + ' stargazers' + LABEL_SUFFIX);
+          setupCounter(obj.data.stargazers_count, 'stargazers');
         }
 
         break;
       case 'star':
-        counter.textContent = obj.data.stargazers_count && addCommas(obj.data.stargazers_count);
-        counter.setAttribute('aria-label', counter.textContent + ' stargazers' + LABEL_SUFFIX);
+        setupCounter(obj.data.stargazers_count, 'stargazers');
         break;
       case 'fork':
-        counter.textContent = obj.data.network_count && addCommas(obj.data.network_count);
-        counter.setAttribute('aria-label', counter.textContent + ' forks' + LABEL_SUFFIX);
+        setupCounter(obj.data.network_count, 'forks');
         break;
       case 'follow':
-        counter.textContent = obj.data.followers && addCommas(obj.data.followers);
-        counter.setAttribute('aria-label', counter.textContent + ' followers' + LABEL_SUFFIX);
+        setupCounter(obj.data.followers, 'followers');
         break;
     }
 
