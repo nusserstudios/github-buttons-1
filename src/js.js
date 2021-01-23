@@ -34,29 +34,29 @@
   var parameters = getUrlParameters();
 
   // Parameters
-  var user = parameters.user;
-  var repo = parameters.repo;
-  var type = parameters.type;
-  var count = parameters.count;
-  var size = parameters.size;
-  var v = parameters.v;
+  var userParam = parameters.user;
+  var repoParam = parameters.repo;
+  var typeParam = parameters.type;
+  var countParam = parameters.count;
+  var sizeParam = parameters.size;
+  var versionParam = parameters.v;
 
   // Elements
-  var button = document.querySelector('.gh-btn');
-  var mainButton = document.querySelector('.github-btn');
-  var text = document.querySelector('.gh-text');
-  var counter = document.querySelector('.gh-count');
+  var buttonElement = document.querySelector('.gh-btn');
+  var mainButtonElement = document.querySelector('.github-btn');
+  var textElement = document.querySelector('.gh-text');
+  var counterElement = document.querySelector('.gh-count');
 
   // Constants
-  var LABEL_SUFFIX = ' on GitHub';
+  var LABEL_SUFFIX = 'on GitHub';
   var GITHUB_URL = 'https://github.com/';
   var API_URL = 'https://api.github.com/';
-  var REPO_URL = GITHUB_URL + user + '/' + repo;
-  var USER_REPO = user + '/' + repo;
+  var REPO_URL = GITHUB_URL + userParam + '/' + repoParam;
+  var USER_REPO = userParam + '/' + repoParam;
 
   function setupCounter(data, message) {
-    counter.textContent = data && addCommas(data);
-    counter.setAttribute('aria-label', counter.textContent + ' ' + message + LABEL_SUFFIX);
+    counterElement.textContent = data && addCommas(data);
+    counterElement.setAttribute('aria-label', counterElement.textContent + ' ' + message + ' ' + LABEL_SUFFIX);
   }
 
   window.callback = function(obj) {
@@ -64,9 +64,9 @@
       return;
     }
 
-    switch (type) {
+    switch (typeParam) {
       case 'watch':
-        if (v === '2') {
+        if (versionParam === '2') {
           setupCounter(obj.data.subscribers_count, 'watchers');
         } else {
           setupCounter(obj.data.stargazers_count, 'stargazers');
@@ -85,77 +85,77 @@
     }
 
     // Show the count if asked and if it's not empty
-    if (count === 'true' && counter.textContent !== '') {
-      counter.style.display = 'block';
-      counter.removeAttribute('aria-hidden');
+    if (countParam === 'true' && counterElement.textContent !== '') {
+      counterElement.style.display = 'block';
+      counterElement.removeAttribute('aria-hidden');
     }
   };
 
   // Set href to be URL for repo
-  button.href = REPO_URL;
+  buttonElement.href = REPO_URL;
 
   var title;
 
   // Add the class, change the text label, set count link href
-  switch (type) {
+  switch (typeParam) {
     case 'watch':
-      if (v === '2') {
-        mainButton.className += ' github-watchers';
-        text.textContent = 'Watch';
-        counter.href = REPO_URL + '/watchers';
+      if (versionParam === '2') {
+        mainButtonElement.className += ' github-watchers';
+        textElement.textContent = 'Watch';
+        counterElement.href = REPO_URL + '/watchers';
       } else {
-        mainButton.className += ' github-stargazers';
-        text.textContent = 'Star';
-        counter.href = REPO_URL + '/stargazers';
+        mainButtonElement.className += ' github-stargazers';
+        textElement.textContent = 'Star';
+        counterElement.href = REPO_URL + '/stargazers';
       }
 
-      title = text.textContent + ' ' + USER_REPO;
+      title = textElement.textContent + ' ' + USER_REPO;
       break;
     case 'star':
-      mainButton.className += ' github-stargazers';
-      text.textContent = 'Star';
-      counter.href = REPO_URL + '/stargazers';
-      title = text.textContent + ' ' + USER_REPO;
+      mainButtonElement.className += ' github-stargazers';
+      textElement.textContent = 'Star';
+      counterElement.href = REPO_URL + '/stargazers';
+      title = textElement.textContent + ' ' + USER_REPO;
       break;
     case 'fork':
-      mainButton.className += ' github-forks';
-      text.textContent = 'Fork';
-      button.href = REPO_URL + '/fork';
-      counter.href = REPO_URL + '/network';
-      title = text.textContent + ' ' + USER_REPO;
+      mainButtonElement.className += ' github-forks';
+      textElement.textContent = 'Fork';
+      buttonElement.href = REPO_URL + '/fork';
+      counterElement.href = REPO_URL + '/network';
+      title = textElement.textContent + ' ' + USER_REPO;
       break;
     case 'follow':
-      mainButton.className += ' github-me';
-      text.textContent = 'Follow @' + user;
-      button.href = GITHUB_URL + user;
-      counter.href = GITHUB_URL + user + '?tab=followers';
-      title = text.textContent;
+      mainButtonElement.className += ' github-me';
+      textElement.textContent = 'Follow @' + userParam;
+      buttonElement.href = GITHUB_URL + userParam;
+      counterElement.href = GITHUB_URL + userParam + '?tab=followers';
+      title = textElement.textContent;
       break;
     case 'sponsor':
-      mainButton.className += ' github-me';
-      text.textContent = 'Sponsor @' + user;
-      button.href = GITHUB_URL + 'sponsors/' + user;
-      title = text.textContent;
+      mainButtonElement.className += ' github-me';
+      textElement.textContent = 'Sponsor @' + userParam;
+      buttonElement.href = GITHUB_URL + 'sponsors/' + userParam;
+      title = textElement.textContent;
       break;
   }
 
-  button.setAttribute('aria-label', title + LABEL_SUFFIX);
-  document.title = title + LABEL_SUFFIX;
+  buttonElement.setAttribute('aria-label', title + ' ' + LABEL_SUFFIX);
+  document.title = title + ' ' + LABEL_SUFFIX;
 
   // Change the size if requested
-  if (size === 'large') {
-    mainButton.className += ' github-btn-large';
+  if (sizeParam === 'large') {
+    mainButtonElement.className += ' github-btn-large';
   }
 
   // If count is not requested or type is sponsor,
   // there's no need to make an API call
-  if (count !== 'true' || type === 'sponsor') {
+  if (countParam !== 'true' || typeParam === 'sponsor') {
     return;
   }
 
-  if (type === 'follow') {
-    jsonp(API_URL + 'users/' + user);
+  if (typeParam === 'follow') {
+    jsonp(API_URL + 'users/' + userParam);
   } else {
-    jsonp(API_URL + 'repos/' + user + '/' + repo);
+    jsonp(API_URL + 'repos/' + userParam + '/' + repoParam);
   }
 })();
