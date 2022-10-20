@@ -6,8 +6,7 @@
   function getUrlParameters() {
     var vars = [];
     var hash;
-    var location = window.location;
-    var hashes = location.href.slice(location.href.indexOf('?') + 1).split('&');
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
 
     for (var i = 0; i < hashes.length; i++) {
       hash = hashes[i].split('=');
@@ -24,11 +23,10 @@
   }
 
   function jsonp(path) {
-    var head = document.head;
     var script = document.createElement('script');
 
     script.src = path + '?callback=callback';
-    head.insertBefore(script, head.firstChild);
+    document.head.insertBefore(script, document.head.firstChild);
   }
 
   var parameters = getUrlParameters();
